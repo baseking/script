@@ -1,0 +1,63 @@
+适用网站：北京市职业技能提升行动管理平台
+网址：https://www.bjjnts.cn/
+
+一、实现功能：
+1 播放完毕自动跳转下一课
+	在跳转下一课中可能因为网络缓存原因需要等待较长时间。如遇到重复播放，请刷新页面重来
+2 自动确认弹窗
+3 建议人脸识别验证
+	此部分可能会有长时间的点击现象，此时重新刷新页面重试，或刷新后手动验证后再输入代码
+
+二、说明	
+1 如使用视频加速，加速值不要设置太大，视网络情况设置，以5以内为宜
+2 操作前先打开窗口，手动切换到最新未播放。待开始播放后再输入代码
+3 可能存在未/无法解决的问题，如遇到请刷新页面重来或手动介入
+4 播放完毕，课程进度更新不是实时的，可能需要等十几分钟才会更新
+5 在Win10 ltsc 2019 64 ，chrome（Version 80.0.3987.132） 浏览器测试，其他平台未测试，但应该通用
+6 可以先选择一门课程测试效果再批量测试
+7 PC需要有摄像头支持，如无摄像头支持则可以安装虚拟摄像头软件
+三、操作
+浏览器打开【开发者工具】，切换到console页面，复制以下代码回车
+chrome 可按快捷键Ctrl+Shift+I
+可在console页面查看简易日志
+
+四、代码
+
+clearInterval(autoRun);	
+$("a").attr("data-lock","0");
+var autoRun = setInterval(function(){
+//弹窗确认
+if("dialog" === $(".layui-layer.layui-layer-dialog").attr("type")){
+	$("a[class=layui-layer-btn0]").click();
+	console.log("confirm");
+}
+//跳转下一课目
+var timestr = $(".course_study_sonmenu.on p:nth-last-child(1)").html();
+var alltime = parseInt(timestr.substring(1,3))*3600+parseInt(timestr.substring(4,6))*60+parseInt(timestr.substring(7,9));
+if(parseInt(video.currentTime) === 0){
+		video.play();
+	}
+if(alltime === parseInt(video.currentTime)){
+	var nowid=$(".course_study_sonmenu.on").children("a").attr("data-lessonid");
+	var nextid = nowid*1 + 1;
+	var lessonnum=$(".course_study_sonmenu.on").children("a").attr("data-lessonnum")*1+1;
+	console.log(new Date() + ",next lession:"+$('.lesson-'+lessonnum+' .course_study_menutitle').html()+",detail:"+nextid+"-"+lessonnum);
+	$("a[data-lessonid="+nextid+"]").click();	
+}
+
+//人脸验证处理
+var cli=0;
+if(!$("#face_startbtn").is(":hidden")){
+	if($("#face_startbtn").attr("class") === "face_startbtn"){
+		$(".face_recogn").hide();
+	}
+	setTimeout(function() {
+		if(!($("#face_startbtn").attr("disabled")==="disabled")){
+			$("#face_startbtn").click();
+			console.log("click verify");
+		}
+	},15000);
+	console.log("hide");
+}
+//脚本结束
+},1000);autoRun;
