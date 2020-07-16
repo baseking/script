@@ -33,16 +33,21 @@ if("dialog" === $(".layui-layer.layui-layer-dialog").attr("type")){
 }
 //跳转下一课目
 var timestr = $(".course_study_sonmenu.on p:nth-last-child(1)").html();
-var alltime = parseInt(timestr.substring(1,3))*3600+parseInt(timestr.substring(4,6))*60+parseInt(timestr.substring(7,9));
+//var alltime = parseInt(timestr.substring(1,3))*3600+parseInt(timestr.substring(4,6))*60+parseInt(timestr.substring(7,9));
 if(parseInt(video.currentTime) === 0){
 		video.play();
 	}
-if(alltime === parseInt(video.currentTime)){
+if(duration === parseInt(video.currentTime)){
 	var nowid=$(".course_study_sonmenu.on").children("a").attr("data-lessonid");
 	var nextid = nowid*1 + 1;
+	if($("a[data-lessonid="+nextid+"]").length === 1){
 	var lessonnum=$(".course_study_sonmenu.on").children("a").attr("data-lessonnum")*1+1;
 	console.log(new Date() + ",next lession:"+$('.lesson-'+lessonnum+' .course_study_menutitle').html()+",detail:"+nextid+"-"+lessonnum);
-	$("a[data-lessonid="+nextid+"]").click();	
+	$("a[data-lessonid="+nextid.toString()+"]").click();
+	} else {
+		clearInterval(autoRun);
+		alert("课程："+$(".course_detail_title").html()+"已完成")
+	}
 }
 
 //人脸验证处理
